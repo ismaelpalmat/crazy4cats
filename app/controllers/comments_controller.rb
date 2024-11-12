@@ -1,18 +1,24 @@
 class CommentsController < ApplicationController
+  before_action :set_post, only: [:create]
+
   def create
-    @post = Post.find(params[:post_id])
     @comment = @post.comments.new(comment_params)
-    @comment.user = current_user if current_user.present?
+    @comment.user = current_user unless @comment.anonymous # Si no es anónimo, asigna el usuario actual
+
     if @comment.save
-      redirect_to @post, notice: "Comentario agregado!"
+      redirect_to @post, notice: 'Comentario creado con éxito.'
     else
-      redirect_to @post, alert: "No se pudo agregar el comentario"
+      render 'posts/show'
+    end
   end
-end
 
-private
+  private
 
-def comment_params
+  def set_post
+    @post = Post.find(params[:post_id])  # Encuentra el post con el id que se pasa en los parámetros
+  end
+
+  def comment_params
     params.require(:comment).permit(:content, :anonymous)
   end
 end

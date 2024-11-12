@@ -5,23 +5,46 @@
 
 <h2>Comentarios</h2>
 <% @post.comments.each do |comment| %>
-  <p><strong><%= comment.anonymous ? "Anónimo" : comment.user.username %>:</strong> <%= comment.content %></p>
+  <p>
+    <strong>
+      <%= comment.anonymous ? "Anónimo" : (comment.user.present? ? comment.user.email : "Usuario") %>:
+    </strong>
+    <%= comment.content %>
+  </p>
 <% end %>
 
+
 <h2>Reaccionar a esta publicación</h2>
-<%= form_with url: post_reactions_path(@post), local: true do |form| %>
+
+<%= form_with url: post_reactions_path(@post), method: :post, local: true do |form| %>
   <%= form.hidden_field :like, value: true %>
   <%= form.submit "Me gusta" %>
 <% end %>
 
-<%= form_with url: post_reactions_path(@post), local: true do |form| %>
+<%= form_with url: post_reactions_path(@post), method: :post, local: true do |form| %>
   <%= form.hidden_field :like, value: false %>
   <%= form.submit "No me gusta" %>
 <% end %>
 
+<h3>Reacciones</h3>
+<p>Me gusta: <%= @post.reactions.where(like: true).count %></p>
+<p>No me gusta: <%= @post.reactions.where(like: false).count %></p>
+
+
 <h2>Agregar un comentario</h2>
-<%= form_with url: post_comments_path(@post), local: true do |form| %>
-  <%= form.text_area :content, placeholder: "Escribe tu comentario aquí..." %>
-  <%= form.check_box :anonymous %> Anónimo
-  <%= form.submit "Comentar" %>
+
+<%= form_with model: [ @post, @post.comments.build ] do |form| %>
+  <div>
+    <%= form.label :content, "Comentario" %>
+    <%= form.text_area :content %>
+  </div>
+  
+  <div>
+    <%= form.label :anonymous, "Comentar como anónimo" %>
+    <%= form.check_box :anonymous %>
+  </div>
+  
+  <div>
+    <%= form.submit "Publicar comentario" %>
+  </div>
 <% end %>
