@@ -1,0 +1,27 @@
+<h1>Detalles de la Publicación</h1>
+
+<p><strong>Autor:</strong> <%= @post.user.username %></p>
+<p><strong>Contenido:</strong> <%= @post.content %></p>
+
+<h2>Comentarios</h2>
+<% @post.comments.each do |comment| %>
+  <p><strong><%= comment.anonymous ? "Anónimo" : comment.user.username %>:</strong> <%= comment.content %></p>
+<% end %>
+
+<h2>Reaccionar a esta publicación</h2>
+<%= form_with url: post_reactions_path(@post), local: true do |form| %>
+  <%= form.hidden_field :like, value: true %>
+  <%= form.submit "Me gusta" %>
+<% end %>
+
+<%= form_with url: post_reactions_path(@post), local: true do |form| %>
+  <%= form.hidden_field :like, value: false %>
+  <%= form.submit "No me gusta" %>
+<% end %>
+
+<h2>Agregar un comentario</h2>
+<%= form_with url: post_comments_path(@post), local: true do |form| %>
+  <%= form.text_area :content, placeholder: "Escribe tu comentario aquí..." %>
+  <%= form.check_box :anonymous %> Anónimo
+  <%= form.submit "Comentar" %>
+<% end %>

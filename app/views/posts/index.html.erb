@@ -1,0 +1,8 @@
+<h1>Publicaciones de Crazy4Cats</h1>
+
+<% @posts.each do |post| %>
+  <div>
+    <p><%= post.content %></p>
+    <small>Publicado por: <%= post.user.username %></small>
+  </div>
+<% end %>
